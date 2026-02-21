@@ -174,7 +174,7 @@ def seed_wage_data(supabase: Client):
 
     # Label each row's source based on BLS area_type code
     # 1 = national, 2 = state, 3 = metro, 4 = nonmetro
-    area_type_to_source = {"1": "national", "2": "state", "3": "metro", "4": "metro"}
+    area_type_to_source = {"1": "national", "2": "state", "3": "territory", "4": "metro", "6": "nonmetro"}
     df["source"] = df["area_type"].map(area_type_to_source).fillna("other")
 
     # Deduplicate: for the same (area, soc_code) keep metro > state > national
