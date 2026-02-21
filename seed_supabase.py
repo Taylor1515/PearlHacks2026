@@ -51,6 +51,13 @@ JOB_CATEGORIES = {
     "Cybersecurity Analyst":        ["15-1212"],
     "Database Administrator":       ["15-1242"],
     "IT Project Manager":           ["15-1299"],
+    "Web Developer":                ["15-1254"],
+    "Software QA / Test Engineer":  ["15-1253"],
+    "Computer Programmer":          ["15-1251"],
+    "Network / Cloud Architect":    ["15-1241"],
+    "Operations Research Analyst":  ["15-2031"],
+    "Hardware Engineer":            ["17-2061"],
+    "Robotics Engineer":            ["17-2199"],
 }
 
 TARGET_SOC_CODES = {
