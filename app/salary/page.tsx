@@ -33,7 +33,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { ArrowRight, Sparkles, TrendingUp, Info, Check, ChevronsUpDown, Handshake, AlertCircle } from "lucide-react";
+import { ArrowRight, Sparkles, TrendingUp, Info, Check, ChevronsUpDown, Handshake, AlertCircle, BadgeDollarSign } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { SalaryDistributionChart } from "@/components/SalaryDistributionChart";
@@ -235,16 +235,15 @@ export default function WageWise() {
 
     return (
         <>
-        {/* Nav — unchanged from your original */}
         <div className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                {/* Logo/Brand */}
+            {/* Logo/Brand */}
                 <Link href="/" className="flex items-center space-x-2 group">
                     <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                        <Handshake className="w-5 h-5 text-primary-foreground" />
+                        <BadgeDollarSign className="w-5 h-5 text-primary-foreground" />
                     </div>
                     <span className="font-bold text-xl hidden sm:inline-block bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-                        ProjectName
+                        WageWise
                     </span>
                 </Link>
 
@@ -253,25 +252,23 @@ export default function WageWise() {
                     <NavigationMenuList className="gap-1">
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
-                                <Link href="/" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-accent/50 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
-                                    Home
-                                </Link>
+                            <Link href="/" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent focus:bg-transparent transition-[transform,color] duration-200 hover:text-primary focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105">
+                                Home
+                            </Link>
                             </NavigationMenuLink>
                         </NavigationMenuItem>
-
+                    <NavigationMenuItem>
+                        <NavigationMenuLink asChild>
+                            <Link href="/salary" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent focus:bg-transparent transition-[transform,color] duration-200 hover:text-primary focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105">
+                                Salary Estimate
+                            </Link>
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
-                                <Link href="/wagewise" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
-                                Wage Wise
-                                </Link>
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
-
-                        <NavigationMenuItem>
-                            <NavigationMenuLink asChild>
-                                <Link href="/resumereview" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
-                                Resume Review
-                                </Link>
+                            <Link href="/affordability" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent focus:bg-transparent transition-[transform,color] duration-200 hover:text-primary focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105">
+                                City Affordability
+                            </Link>
                             </NavigationMenuLink>
                         </NavigationMenuItem>
                     </NavigationMenuList>
