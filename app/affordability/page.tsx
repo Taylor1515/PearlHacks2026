@@ -177,6 +177,10 @@ export default function AffordabilityPage() {
         }),
       });
 
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Something went wrong");
+      setResults(data); // This line sets the results state so they display
+
       setTimeout(() => {
         document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
       }, 100);
