@@ -201,24 +201,24 @@ function applySeniorityAdjustment(
   const ranges = {
     entry: {
       label: "Entry Level",
-      targetAnnual: wages.annual.p25,
-      rangeAnnual: { low: wages.annual.p10, high: wages.annual.median },
-      targetHourly: wages.hourly.p25,
-      rangeHourly: { low: wages.hourly.p10, high: wages.hourly.median },
+      targetAnnual: wages.annual.p10,
+      rangeAnnual: { low: wages.annual.p10, high: wages.annual.p25 },
+      targetHourly: wages.hourly.p10,
+      rangeHourly: { low: wages.hourly.p10, high: wages.hourly.p25 },
     },
     mid: {
       label: "Mid Level",
-      targetAnnual: wages.annual.median,
-      rangeAnnual: { low: wages.annual.p25, high: wages.annual.p75 },
-      targetHourly: wages.hourly.median,
-      rangeHourly: { low: wages.hourly.p25, high: wages.hourly.p75 },
+      targetAnnual: wages.annual.p25,
+      rangeAnnual: { low: wages.annual.p25, high: wages.annual.median },
+      targetHourly: wages.hourly.p25,
+      rangeHourly: { low: wages.hourly.p25, high: wages.hourly.median },
     },
     senior: {
       label: "Senior Level",
-      targetAnnual: wages.annual.p75,
-      rangeAnnual: { low: wages.annual.median, high: wages.annual.p90 },
-      targetHourly: wages.hourly.p75,
-      rangeHourly: { low: wages.hourly.median, high: wages.hourly.p90 },
+      targetAnnual: wages.annual.median,
+      rangeAnnual: { low: wages.annual.median, high: wages.annual.p75 },
+      targetHourly: wages.hourly.median,
+      rangeHourly: { low: wages.hourly.median, high: wages.hourly.p75 },
     },
   };
 

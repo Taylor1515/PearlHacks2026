@@ -108,7 +108,10 @@ ${input.extraContext ? `6. **Additional context** — Factor in: ${input.extraCo
 - Acknowledge uncertainty honestly. If data is limited, say so.
 - Write the rationale as if speaking directly to the candidate — warm, empowering, and professional.
 - Negotiation tips should be specific to THIS candidate's situation, not generic advice.
-- Do not recommend a salary below the BLS 25th percentile unless there is a very strong reason.
+- For entry level candidates (0-2 years experience), target the P10-P25 range. The BLS median reflects the full population including senior people, so do not use it as an entry level target.
+- For mid level (3-6 years), target P25-P50.
+- For senior (7+ years), target P50-P75.
+- Only recommend above P75 if the company is a known top-tier payer (FAANG/big tech) AND the candidate has strong experience.
 
 ## RESPONSE FORMAT
 Respond with valid JSON only. No markdown, no explanation outside the JSON. Use this exact structure:
