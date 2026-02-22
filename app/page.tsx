@@ -114,7 +114,7 @@ export default function HomePage() {
 
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground">
-                    Get a salary estimate backed by real Bureau of Labor Statistics market data and AI-powered analysis
+                    Get a salary estimate backed by real Bureau of Labor Statistics market data and realistic AI-powered analysis
                     tailored to your experience, location, and role.
                   </p>
 
