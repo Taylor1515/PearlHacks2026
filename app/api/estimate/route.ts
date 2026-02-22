@@ -2,39 +2,39 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/db";
 import { wageDataTable, jobCategoriesTable } from "@/server/db/schema";
 import { eq, and, ilike, or } from "drizzle-orm";
+import { generateSalaryEstimate } from "@/server/gemini";
 
 /**
  * POST /api/estimate
- * Returns BLS wage data for a given location and job category.
  *
  * Request body:
  * {
- *   location: string;       // e.g. "San Francisco" or "Seattle, WA"
- *   jobLabel: string;       // e.g. "Software Engineer"
- *   seniorityLevel?: string // e.g. "entry" | "mid" | "senior"
- * }
- *
- * Response:
- * {
- *   location: { searched: string, matched: string, isFallback: boolean },
- *   jobTitle: string,
- *   seniorityLevel: string,
- *   wages: {
- *     annual: { p10, p25, median, p75, p90, mean },
- *     hourly: { p10, p25, median, p75, p90, mean }
- *   },
- *   dataSource: string
+ *   location: string;           // e.g. "San Francisco"
+ *   jobLabel: string;           // e.g. "Software Engineer"
+ *   jobTitle: string;           // e.g. "Senior Frontend Engineer"
+ *   company: string;            // e.g. "Google"
+ *   seniorityLevel: string;     // "entry" | "mid" | "senior"
+ *   yearsOfExperience: number;  // e.g. 6
+ *   extraContext?: string;      // competing offers, skills, etc.
  * }
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { location, jobLabel, seniorityLevel = "mid" } = body;
+    const {
+      location,
+      jobLabel,
+      jobTitle,
+      company,
+      seniorityLevel = "mid",
+      yearsOfExperience,
+      extraContext,
+    } = body;
 
-    // --- Validate inputs ---
-    if (!location || !jobLabel) {
+    // --- Validate required inputs ---
+    if (!location || !jobLabel || !jobTitle || !company || yearsOfExperience === undefined) {
       return NextResponse.json(
-        { error: "location and jobLabel are required" },
+        { error: "location, jobLabel, jobTitle, company, and yearsOfExperience are required" },
         { status: 400 }
       );
     }
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     const socCode = jobCategory.socCodes[0];
 
-    // --- Try to find wage data, with metro → state → national fallback ---
+    // --- Find BLS wage data with metro → state → national fallback ---
     const wageData = await findWageData(location, socCode);
 
     if (!wageData) {
@@ -71,18 +71,43 @@ export async function POST(request: NextRequest) {
     // --- Apply seniority adjustment ---
     const adjusted = applySeniorityAdjustment(wages, seniorityLevel);
 
+    const isFallback = wageData.areaType === "1";
+
+    // --- Call Gemini for AI-powered salary estimate and rationale ---
+    const aiEstimate = await generateSalaryEstimate({
+      // User inputs
+      jobCategory: jobLabel,
+      jobTitle,
+      company,
+      location,
+      seniorityLevel,
+      yearsOfExperience,
+      extraContext,
+
+      // BLS data
+      matchedLocation: wageData.areaName ?? "",
+      isFallback,
+      wages: adjusted,
+      totalEmployment: wageData.totalEmployment,
+      dataSource: `BLS OEWS 2024 (${wageData.source})`,
+    });
+
+    // --- Return combined BLS + AI response ---
     return NextResponse.json({
       location: {
         searched: location,
         matched: wageData.areaName,
-        isFallback: wageData.areaType !== "4", // not a metro match
+        isFallback,
       },
-      jobTitle: wageData.occTitle,
-      jobLabel: jobLabel,
+      jobTitle,
+      jobLabel,
+      company,
       seniorityLevel,
-      wages: adjusted,
+      yearsOfExperience,
+      blsWages: adjusted,
       totalEmployment: wageData.totalEmployment,
       dataSource: `BLS OEWS 2024 (${wageData.source})`,
+      aiEstimate,
     });
   } catch (error) {
     console.error("POST /api/estimate error:", error);
@@ -97,14 +122,8 @@ export async function POST(request: NextRequest) {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Tries to find wage data for a location using progressively broader matches:
- * 1. Metro area (area_type = '3') — fuzzy name match
- * 2. State (area_type = '2') — fuzzy name match
- * 3. National (area_type = '1') — fallback
- */
 async function findWageData(location: string, socCode: string) {
-  // 1. Try metro match (area_type = '3')
+  // 1. Metro (area_type = '4')
   const metroResults = await db
     .select()
     .from(wageDataTable)
@@ -122,7 +141,7 @@ async function findWageData(location: string, socCode: string) {
 
   if (metroResults.length > 0) return metroResults[0];
 
-  // 2. Try state match (area_type = '2')
+  // 2. State (area_type = '2')
   const stateResults = await db
     .select()
     .from(wageDataTable)
@@ -152,9 +171,6 @@ async function findWageData(location: string, socCode: string) {
   return nationalResults[0] ?? null;
 }
 
-/**
- * Parses Drizzle's string numeric values into numbers.
- */
 function parseWages(row: typeof wageDataTable.$inferSelect) {
   const p = (v: string | null) => (v ? parseFloat(v) : null);
   return {
@@ -177,17 +193,6 @@ function parseWages(row: typeof wageDataTable.$inferSelect) {
   };
 }
 
-/**
- * Adjusts the salary range based on seniority level.
- * 
- * Rather than fabricating different percentiles, we shift which BLS
- * percentiles we highlight as the "expected range" for each level:
- *   entry  → P25 as target, P10–P50 as range
- *   mid    → P50 as target, P25–P75 as range (default)
- *   senior → P75 as target, P50–P90 as range
- *
- * The raw BLS data is always included so the frontend can show full context.
- */
 function applySeniorityAdjustment(
   wages: ReturnType<typeof parseWages>,
   seniority: string

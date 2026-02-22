@@ -74,7 +74,7 @@ Based on the Bureau of Labor Statistics wage data and the candidate's profile be
 - **Location:** ${input.location}
 - **Seniority Level:** ${input.seniorityLevel}
 - **Years of Relevant Experience:** ${input.yearsOfExperience}
-${input.extraContext ? `- **Additional Context:** ${input.extraContext}` : ""}
+${input.extraContext ? `- **Additional Context:** ${input.extraContext}` : ""}  (This may include relevant details from the job description such as required skills, tech stack, or specific responsibilities.)
 
 ## BLS WAGE DATA (${input.dataSource})
 This data is from the U.S. Bureau of Labor Statistics Occupational Employment and Wage Statistics (OEWS) survey for **${input.matchedLocation}**${input.isFallback ? " (national data used as fallback — local data unavailable)" : ""}.
@@ -100,7 +100,7 @@ Using the BLS data as your foundation, analyze the candidate's profile and provi
 3. **Company context** — "${input.company}" — consider whether this is likely a large tech company (typically pays above median), startup (variable, often equity-heavy), nonprofit (typically below median), or other. Adjust your recommendation accordingly.
 4. **Specific job title** — "${input.jobTitle}" may command a premium or discount vs. the general BLS category. Note any relevant differences.
 5. **Location** — ${input.isFallback ? "Note that only national data was available for this location, so there is more uncertainty in this estimate." : `The data is local to ${input.matchedLocation}, which is a strong signal.`}
-${input.extraContext ? `6. **Additional context** — Factor in: ${input.extraContext}` : ""}
+${input.extraContext ? `6. **Additional context** — Factor in: ${input.extraContext}. This may include job description details like required skills or tech stack that could affect compensation.` : ""}
 
 ## IMPORTANT GUIDANCE FOR YOUR RESPONSE
 - Be specific. Give a real number, not a range as your headline recommendation.
@@ -118,7 +118,7 @@ Respond with valid JSON only. No markdown, no explanation outside the JSON. Use 
     "rangeLow": <number>,
     "rangeHigh": <number>
   },
-  "rationale": "<2-4 paragraphs of warm, specific, data-backed explanation addressed directly to the candidate>",
+  "rationale": "<1-3 concise paragraphs addressed directly to the candidate with data backed explanation>",
   "negotiationTips": [
     "<specific tip 1>",
     "<specific tip 2>",
@@ -142,7 +142,7 @@ export async function generateSalaryEstimate(
     contents: prompt,
     config: {
       temperature: 0.3,      // lower = more consistent, less creative
-      maxOutputTokens: 1024,
+      maxOutputTokens: 2048,
     },
   });
 
