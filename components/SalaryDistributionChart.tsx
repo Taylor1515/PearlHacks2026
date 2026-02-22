@@ -8,12 +8,9 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 import {
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 
 // ---------------------------------------------------------------------------
@@ -36,16 +33,14 @@ interface WageDistribution {
   };
 }
 
-interface RecommendedSalary {
-  point: number;
-  rangeLow: number;
-  rangeHigh: number;
-}
-
 interface SalaryChartProps {
   blsWages: WageDistribution;
   aiEstimate: {
-    recommendedSalary: RecommendedSalary;
+    recommendedSalary: {
+      point: number;
+      rangeLow: number;
+      rangeHigh: number;
+    };
     confidenceLevel: "high" | "medium" | "low";
   };
   jobLabel: string;
@@ -55,29 +50,6 @@ interface SalaryChartProps {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/**
- * Converts BLS percentile points into a smooth bell-curve-like dataset.
- * We assign approximate "density" values to each percentile to simulate
- * the shape of a normal distribution centered around the median.
- */
-function buildChartData(annual: WageDistribution["annual"]) {
-  const points = [
-    { percentile: "P10", salary: annual.p10, density: 0.15, label: "10th" },
-    { percentile: "P25", salary: annual.p25, density: 0.55, label: "25th" },
-    { percentile: "P50", salary: annual.median, density: 1.0, label: "Median" },
-    { percentile: "P75", salary: annual.p75, density: 0.55, label: "75th" },
-    { percentile: "P90", salary: annual.p90, density: 0.15, label: "90th" },
-  ];
-
-  // Filter out null salary points
-  return points.filter((p) => p.salary !== null) as {
-    percentile: string;
-    salary: number;
-    density: number;
-    label: string;
-  }[];
-}
 
 function formatSalary(value: number) {
   return `$${(value / 1000).toFixed(0)}k`;
@@ -99,6 +71,53 @@ const confidenceLabels = {
   low: "Low confidence",
 };
 
+/**
+ * Builds chart data using index as x-axis (0-4) so ReferenceLine can work.
+ * Each point also stores its salary for tooltip display.
+ * We interpolate the recommended salary position as a fractional index.
+ */
+function buildChartData(annual: WageDistribution["annual"]) {
+  const rawPoints = [
+    { key: "P10", salary: annual.p10, density: 0.15, label: "10th percentile" },
+    { key: "P25", salary: annual.p25, density: 0.55, label: "25th percentile" },
+    { key: "P50", salary: annual.median, density: 1.0,  label: "Median" },
+    { key: "P75", salary: annual.p75, density: 0.55, label: "75th percentile" },
+    { key: "P90", salary: annual.p90, density: 0.15, label: "90th percentile" },
+  ].filter((p) => p.salary !== null) as {
+    key: string;
+    salary: number;
+    density: number;
+    label: string;
+  }[];
+
+  // Add index so ReferenceLine can reference by integer position
+  return rawPoints.map((p, i) => ({ ...p, index: i }));
+}
+
+/**
+ * Given a salary value, returns its fractional index position in the chart
+ * by linear interpolation between adjacent percentile points.
+ * e.g. a salary halfway between P25 (index 1) and P50 (index 2) → 1.5
+ */
+function salaryToIndex(
+  salary: number,
+  data: ReturnType<typeof buildChartData>
+): number {
+  if (data.length === 0) return 0;
+  if (salary <= data[0].salary) return 0;
+  if (salary >= data[data.length - 1].salary) return data.length - 1;
+
+  for (let i = 0; i < data.length - 1; i++) {
+    const lo = data[i];
+    const hi = data[i + 1];
+    if (salary >= lo.salary && salary <= hi.salary) {
+      const fraction = (salary - lo.salary) / (hi.salary - lo.salary);
+      return lo.index + fraction;
+    }
+  }
+  return data.length - 1;
+}
+
 // ---------------------------------------------------------------------------
 // Custom Tooltip
 // ---------------------------------------------------------------------------
@@ -108,14 +127,14 @@ function CustomTooltip({
   payload,
 }: {
   active?: boolean;
-  payload?: Array<{ payload: { label: string; salary: number } }>;
+  payload?: Array<{ payload: ReturnType<typeof buildChartData>[number] }>;
 }) {
   if (!active || !payload?.length) return null;
-  const data = payload[0].payload;
+  const d = payload[0].payload;
   return (
     <div className="rounded-lg border bg-background px-3 py-2 shadow-md text-sm">
-      <p className="font-semibold text-foreground">{data.label} percentile</p>
-      <p className="text-muted-foreground">{formatFullSalary(data.salary)}/year</p>
+      <p className="font-semibold text-foreground">{d.label}</p>
+      <p className="text-muted-foreground">{formatFullSalary(d.salary)}/year</p>
     </div>
   );
 }
@@ -133,6 +152,7 @@ export function SalaryDistributionChart({
   const chartData = buildChartData(blsWages.annual);
   const { recommendedSalary, confidenceLevel } = aiEstimate;
   const { seniorityAdjusted } = blsWages;
+  const confidenceColor = confidenceColors[confidenceLevel];
 
   if (chartData.length < 3) {
     return (
@@ -142,16 +162,10 @@ export function SalaryDistributionChart({
     );
   }
 
-  const confidenceColor = confidenceColors[confidenceLevel];
-
-  // Find the x-axis position of the recommended salary
-  // by interpolating between percentile points
-  const salaries = chartData.map((d) => d.salary);
-  const minSalary = Math.min(...salaries);
-  const maxSalary = Math.max(...salaries);
-
-  // We use the salary value directly as x-axis — Recharts will place it correctly
-  const recommendedPoint = recommendedSalary.point;
+  // Convert salary values to fractional index positions for ReferenceLine
+  const recommendedIndex = salaryToIndex(recommendedSalary.point, chartData);
+  const rangeLowIndex = salaryToIndex(recommendedSalary.rangeLow, chartData);
+  const rangeHighIndex = salaryToIndex(recommendedSalary.rangeHigh, chartData);
 
   const chartConfig = {
     density: {
@@ -192,26 +206,12 @@ export function SalaryDistributionChart({
       <ChartContainer config={chartConfig} className="h-[220px] w-full">
         <AreaChart
           data={chartData}
-          margin={{ top: 10, right: 16, left: 0, bottom: 0 }}
+          margin={{ top: 20, right: 16, left: 0, bottom: 0 }}
         >
           <defs>
             <linearGradient id="salaryGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="hsl(var(--chart-1))"
-                stopOpacity={0.3}
-              />
-              <stop
-                offset="95%"
-                stopColor="hsl(var(--chart-1))"
-                stopOpacity={0.02}
-              />
-            </linearGradient>
-
-            {/* Gradient for the recommended range highlight */}
-            <linearGradient id="recommendedGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={confidenceColor} stopOpacity={0.25} />
-              <stop offset="95%" stopColor={confidenceColor} stopOpacity={0.02} />
+              <stop offset="5%"  stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0.02} />
             </linearGradient>
           </defs>
 
@@ -222,9 +222,16 @@ export function SalaryDistributionChart({
             strokeOpacity={0.5}
           />
 
+          {/* X axis: use index as numeric axis, format as salary */}
           <XAxis
-            dataKey="salary"
-            tickFormatter={formatSalary}
+            dataKey="index"
+            type="number"
+            domain={[0, chartData.length - 1]}
+            ticks={chartData.map((d) => d.index)}
+            tickFormatter={(i) => {
+              const point = chartData[Math.round(i)];
+              return point ? formatSalary(point.salary) : "";
+            }}
             tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
             axisLine={false}
             tickLine={false}
@@ -234,7 +241,7 @@ export function SalaryDistributionChart({
 
           <Tooltip content={<CustomTooltip />} />
 
-          {/* Main distribution area */}
+          {/* Bell curve area */}
           <Area
             type="monotone"
             dataKey="density"
@@ -250,68 +257,55 @@ export function SalaryDistributionChart({
             }}
           />
 
-          {/* Recommended salary line */}
+          {/* Range low dashed line */}
           <ReferenceLine
-            x={recommendedPoint}
+            x={rangeLowIndex}
+            stroke="hsl(var(--muted-foreground))"
+            strokeWidth={1.5}
+            strokeDasharray="4 4"
+            strokeOpacity={0.7}
+          />
+
+          {/* Range high dashed line */}
+          <ReferenceLine
+            x={rangeHighIndex}
+            stroke="hsl(var(--muted-foreground))"
+            strokeWidth={1.5}
+            strokeDasharray="4 4"
+            strokeOpacity={0.7}
+          />
+
+          {/* Recommended salary solid line */}
+          <ReferenceLine
+            x={recommendedIndex}
             stroke={confidenceColor}
             strokeWidth={2.5}
-            strokeDasharray="0"
             label={{
-              value: formatSalary(recommendedPoint),
+              value: formatSalary(recommendedSalary.point),
               position: "top",
               fontSize: 11,
               fontWeight: 600,
               fill: confidenceColor,
-              offset: 8,
+              offset: 6,
             }}
           />
-
-          {/* Seniority range low marker */}
-          {seniorityAdjusted.rangeAnnual.low && (
-            <ReferenceLine
-              x={seniorityAdjusted.rangeAnnual.low}
-              stroke="hsl(var(--muted-foreground))"
-              strokeWidth={1}
-              strokeDasharray="4 4"
-              strokeOpacity={0.6}
-            />
-          )}
-
-          {/* Seniority range high marker */}
-          {seniorityAdjusted.rangeAnnual.high && (
-            <ReferenceLine
-              x={seniorityAdjusted.rangeAnnual.high}
-              stroke="hsl(var(--muted-foreground))"
-              strokeWidth={1}
-              strokeDasharray="4 4"
-              strokeOpacity={0.6}
-            />
-          )}
         </AreaChart>
       </ChartContainer>
 
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <div
-            className="h-0.5 w-4 rounded-full"
-            style={{ backgroundColor: "hsl(var(--chart-1))" }}
-          />
+          <div className="h-0.5 w-4 rounded-full" style={{ backgroundColor: "hsl(var(--chart-1))" }} />
           <span>Market distribution</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div
-            className="h-4 w-0.5 rounded-full"
-            style={{ backgroundColor: confidenceColor }}
-          />
-          <span>Recommended: {formatFullSalary(recommendedPoint)}/yr</span>
+          <div className="h-4 w-0.5 rounded-full" style={{ backgroundColor: confidenceColor }} />
+          <span>Recommended: {formatFullSalary(recommendedSalary.point)}/yr</span>
         </div>
-        {(seniorityAdjusted.rangeAnnual.low || seniorityAdjusted.rangeAnnual.high) && (
-          <div className="flex items-center gap-1.5">
-            <div className="h-0.5 w-4 border-t border-dashed border-muted-foreground/60" />
-            <span>{seniorityAdjusted.label} range</span>
-          </div>
-        )}
+        <div className="flex items-center gap-1.5">
+          <div className="h-0.5 w-4 border-t border-dashed border-muted-foreground/60" />
+          <span>Ask range: {formatFullSalary(recommendedSalary.rangeLow)} – {formatFullSalary(recommendedSalary.rangeHigh)}</span>
+        </div>
       </div>
 
       {/* Percentile callouts */}
@@ -321,10 +315,7 @@ export function SalaryDistributionChart({
           { label: "Median", value: blsWages.annual.median, note: "market midpoint" },
           { label: "75th percentile", value: blsWages.annual.p75, note: "senior target" },
         ].map(({ label, value, note }) => (
-          <div
-            key={label}
-            className="rounded-lg border bg-muted/30 px-3 py-2 text-center"
-          >
+          <div key={label} className="rounded-lg border bg-muted/30 px-3 py-2 text-center">
             <p className="text-xs text-muted-foreground">{label}</p>
             <p className="text-sm font-semibold text-foreground mt-0.5">
               {value ? formatFullSalary(value) : "N/A"}
