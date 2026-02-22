@@ -496,7 +496,7 @@ export default function WageWise() {
                                 </Button>
                                 {isLoading && (
                                     <p className="text-center text-xs text-muted-foreground mt-2">
-                                        This usually takes 5–10 seconds while we analyze market data
+                                        This usually takes 10–20 seconds while we analyze market data
                                     </p>
                                 )}
                             </div>
@@ -519,8 +519,8 @@ export default function WageWise() {
                         )}
 
                         {/* Headline recommendation */}
-                        <Card className="border-2 border-primary/20 bg-primary/5">
-                            <CardContent className="pt-6">
+                        <Card>
+                            <CardContent>
                                 <div className="flex items-start justify-between flex-wrap gap-4">
                                     <div>
                                         <p className="text-sm text-muted-foreground">Recommended salary for</p>
@@ -541,7 +541,7 @@ export default function WageWise() {
 
                         {/* Chart */}
                         <Card>
-                            <CardContent className="pt-6">
+                            <CardContent>
                                 <SalaryDistributionChart
                                     blsWages={results.blsWages}
                                     aiEstimate={results.aiEstimate}

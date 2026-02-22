@@ -162,10 +162,7 @@ export function SalaryDistributionChart({
     );
   }
 
-  // Convert salary values to fractional index positions for ReferenceLine
   const recommendedIndex = salaryToIndex(recommendedSalary.point, chartData);
-  const rangeLowIndex = salaryToIndex(recommendedSalary.rangeLow, chartData);
-  const rangeHighIndex = salaryToIndex(recommendedSalary.rangeHigh, chartData);
 
   const chartConfig = {
     density: {
@@ -257,24 +254,6 @@ export function SalaryDistributionChart({
             }}
           />
 
-          {/* Range low dashed line */}
-          <ReferenceLine
-            x={rangeLowIndex}
-            stroke="hsl(var(--muted-foreground))"
-            strokeWidth={1.5}
-            strokeDasharray="4 4"
-            strokeOpacity={0.7}
-          />
-
-          {/* Range high dashed line */}
-          <ReferenceLine
-            x={rangeHighIndex}
-            stroke="hsl(var(--muted-foreground))"
-            strokeWidth={1.5}
-            strokeDasharray="4 4"
-            strokeOpacity={0.7}
-          />
-
           {/* Recommended salary solid line */}
           <ReferenceLine
             x={recommendedIndex}
@@ -294,17 +273,13 @@ export function SalaryDistributionChart({
 
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-        <div className="flex items-center gap-1.5">
+        {/* <div className="flex items-center gap-1.5">
           <div className="h-0.5 w-4 rounded-full" style={{ backgroundColor: "hsl(var(--chart-1))" }} />
           <span>Market distribution</span>
-        </div>
+        </div> */}
         <div className="flex items-center gap-1.5">
           <div className="h-4 w-0.5 rounded-full" style={{ backgroundColor: confidenceColor }} />
           <span>Recommended: {formatFullSalary(recommendedSalary.point)}/yr</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="h-0.5 w-4 border-t border-dashed border-muted-foreground/60" />
-          <span>Ask range: {formatFullSalary(recommendedSalary.rangeLow)} – {formatFullSalary(recommendedSalary.rangeHigh)}</span>
         </div>
       </div>
 
