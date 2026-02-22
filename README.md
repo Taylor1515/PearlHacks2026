@@ -2,7 +2,9 @@
 
 > Data-backed salary insights and cost-of-living analysis for women and nonbinary professionals in tech.
 
-Built for **Pearl Hacks 2026** — [**Live Demo**](https://wagewiseapp.vercel.app/)
+Built for **Pearl Hacks 2026** by [Sarah Glenn](https://github.com/skglenn07) and [Taylor Morris](https://github.com/Taylor1515)
+
+[**Live Demo**](https://wagewiseapp.vercel.app/)
 
 ---
 
@@ -36,7 +38,7 @@ WageWise helps women and nonbinary tech professionals make informed career decis
 |---|---|
 | Framework | Next.js 15 (App Router), React 19, TypeScript |
 | Styling | Tailwind CSS, Shadcn/UI, Lucide React |
-| Charts | Recharts |
+| Charts | Recharts & Shadcn|
 | Database | PostgreSQL via Supabase, Drizzle ORM |
 | AI | Google Gemini 3 Flash |
 | Wage Data | Bureau of Labor Statistics OEWS 2024 |
