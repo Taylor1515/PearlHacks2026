@@ -663,33 +663,32 @@ export default function WageWise() {
                     </span>
                 {/* </Link> */}
                 <NavigationMenu>
-                    <NavigationMenuList className="gap-1">
-                        <NavigationMenuItem>
-                            <NavigationMenuLink 
-                                href="/"
-                                className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-accent/50 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
-                                Home
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <NavigationMenuItem>
-                                <NavigationMenuLink 
-                                    href="/wagewise"
-                                    className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-accent/50 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
-                                    Wage Wise
-                                </NavigationMenuLink>
-                            </NavigationMenuItem>
+                 <NavigationMenuList className="gap-1">
+                <NavigationMenuItem>
+  <NavigationMenuLink asChild>
+    <Link href="/" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-accent/50 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
+      Home
+    </Link>
+  </NavigationMenuLink>
+</NavigationMenuItem>
 
-                        </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <NavigationMenuLink 
-                                href="/resumereview"
-                                className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-accent/50 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
-                                Resume Review
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
-                    </NavigationMenuList>
-                </NavigationMenu>
+<NavigationMenuItem>
+  <NavigationMenuLink asChild>
+    <Link href="/wagewise" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
+      Wage Wise
+    </Link>
+  </NavigationMenuLink>
+</NavigationMenuItem>
+
+<NavigationMenuItem>
+  <NavigationMenuLink asChild>
+    <Link href="/resumereview" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105 duration-200">
+      Resume Review
+    </Link>
+  </NavigationMenuLink>
+</NavigationMenuItem>
+                </NavigationMenuList>
+             </NavigationMenu>
             </div>
         </div>
 
@@ -750,7 +749,7 @@ export default function WageWise() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             {jobCategories.length === 0 ? (
-                                                <SelectItem value="" disabled>Loading...</SelectItem>
+                                                <SelectItem value="loading" disabled>Loading...</SelectItem>
                                             ) : (
                                                 jobCategories.map((cat) => (
                                                     <SelectItem key={cat.id} value={cat.label}>

@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
     const socCode = jobCategory.socCodes[0];
 
     // --- Find BLS wage data with metro → state → national fallback ---
-    const wageData = await findWageData(location, socCode);
+    const searchLocation = location.split(",")[0].trim();
+    const wageData = await findWageData(searchLocation, socCode);
 
     if (!wageData) {
       return NextResponse.json(
