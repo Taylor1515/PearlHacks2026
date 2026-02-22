@@ -1,7 +1,6 @@
-// import type { Metadata } from "next";
-
 import { Inter, Merriweather, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const merriweather = Merriweather({ 
@@ -20,8 +19,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${merriweather.variable} ${jetbrains.variable}`}>
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${merriweather.variable} ${jetbrains.variable}`}>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

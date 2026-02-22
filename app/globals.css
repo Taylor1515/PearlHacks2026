@@ -23,6 +23,12 @@
     --input: #d0d4db;
     --ring: #6468f0;
     --radius: 0.5rem;
+
+    --chart-1: #6468f0;
+    --chart-2: #4f46e5;
+    --chart-3: #443bc9;
+    --chart-4: #3730a5;
+    --chart-5: #312d84;
   }
 
   .dark {
@@ -44,6 +50,12 @@
     --border: #4b5666;
     --input: #4b5666;
     --ring: #818cf9;
+
+    --chart-1: #818cf9;
+    --chart-2: #6468f0;
+    --chart-3: #4f46e5;
+    --chart-4: #443bc9;
+    --chart-5: #3730a5;
   }
 
   * {

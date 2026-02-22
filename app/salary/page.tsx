@@ -33,14 +33,10 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { ArrowRight, Sparkles, TrendingUp, Info, Check, ChevronsUpDown, Handshake, AlertCircle, BadgeDollarSign } from "lucide-react";
+import { ArrowRight, Sparkles, TrendingUp, Info, Check, ChevronsUpDown, AlertCircle, BadgeDollarSign } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { SalaryDistributionChart } from "@/components/SalaryDistributionChart";
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
 
 interface JobCategory {
     id: number;
@@ -99,10 +95,6 @@ interface EstimateResponse {
     };
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export default function WageWise() {
     const [isLoading, setIsLoading] = useState(false);
     const [location, setLocation] = useState("");
@@ -134,7 +126,7 @@ export default function WageWise() {
             try {
                 const response = await fetch(
                     `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(locationSearch)}&country=United States&format=json&limit=5`,
-                    { headers: { "User-Agent": "CareerKit-Hackathon" } }
+                    { headers: { "User-Agent": "PearlHacks-2026" } }
                 );
                 if (response.ok) {
                     const data = await response.json();
@@ -277,12 +269,12 @@ export default function WageWise() {
         </div>
 
         <div className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background">
-            <div className="container mx-auto max-w-3xl px-4 py-12">
+            <div className="container mx-auto max-w-5xl px-4 py-12">
 
                 {/* Header */}
                 <div className="text-center mb-8 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <h1 className="text-6xl font-bold text-primary tracking-tight">
-                        Wage Wise
+                        Know your worth
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         Get personalized salary insights based on your role, experience, and location
@@ -293,7 +285,7 @@ export default function WageWise() {
                 <Alert className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 border-primary/20 bg-primary/5">
                     <Info className="h-4 w-4 text-primary" />
                     <AlertDescription className="text-sm">
-                        Fill out the form below and we'll provide you with a fair salary range backed by market data.
+                        Fill out the form below and we'll provide you with a fair salary estimate backed by market data.
                     </AlertDescription>
                 </Alert>
 

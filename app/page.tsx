@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -7,7 +6,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
-import { ArrowRight, BadgeDollarSign, BarChart3, Brain, Home, DollarSign, FileCheck, HandCoins, Handshake, MapPin, Scale, Shield, Sparkles, TrendingUp, Utensils, Bus, Building, Building2 } from "lucide-react";
+import { ArrowRight, BadgeDollarSign, BarChart3, Brain, Home, HandCoins, Shield, Utensils, Bus,  Building2 } from "lucide-react";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -105,7 +104,7 @@ export default function HomePage() {
               <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-in fade-in slide-in-from-left duration-700 border-2">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg border-2 border-primary flex items-center justify-center mb-4 group-hover:bg-accent/80 transition-colors">
-                    <DollarSign className="w-6 h-6 text-foreground" />
+                    <HandCoins className="w-6 h-6 text-foreground" />
                   </div>
                   <CardTitle className="text-2xl">Salary Estimate</CardTitle>
                   <CardDescription className="text-base">
@@ -134,17 +133,6 @@ export default function HomePage() {
                       <p className="text-xs font-medium">Confidence</p>
                     </div>
                   </div>
-
-                  {/* <ul className="space-y-2">
-                    <li className="flex items-start">
-                      <TrendingUp className="w-5 h-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">Percentile ranges & seniority adjustments</span>
-                    </li>
-                    <li className="flex items-start">
-                      <TrendingUp className="w-5 h-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">Negotiation tips & visual distribution charts</span>
-                    </li>
-                  </ul> */}
 
                   <Link href="/salary" className="block pt-2">
                     <Button className="w-full group">
@@ -189,17 +177,6 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* <ul className="space-y-2">
-                    <li className="flex items-start">
-                      <TrendingUp className="w-5 h-5 text-accent-foreground mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">Monthly expense breakdown as % of income</span>
-                    </li>
-                    <li className="flex items-start">
-                      <TrendingUp className="w-5 h-5 text-accent-foreground mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">Compare tradeoffs across cities</span>
-                    </li>
-                  </ul> */}
-
                   <Link href="/affordability" className="block pt-2">
                     <Button variant="secondary" className="w-full group">
                       Check Affordability
@@ -212,7 +189,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* Call to Action */}
         <section className="py-20 px-4 bg-primary/5">
           <div className="container mx-auto max-w-4xl text-center space-y-6 animate-in fade-in duration-700">
             <h2 className="text-3xl md:text-4xl font-bold">
