@@ -1,6 +1,5 @@
 # WageWise
-
-> Data-backed salary insights and cost-of-living analysis for women and nonbinary professionals in tech.
+> Data-backed salary insights and cost-of-living analysis for tech professionals.
 
 Built for **Pearl Hacks 2026** by [Sarah Glenn](https://github.com/skglenn07) and [Taylor Morris](https://github.com/Taylor1515)
 
@@ -9,8 +8,7 @@ Built for **Pearl Hacks 2026** by [Sarah Glenn](https://github.com/skglenn07) an
 ---
 
 ## Overview
-
-WageWise helps women and nonbinary tech professionals make informed career decisions by combining real Bureau of Labor Statistics wage data with AI-powered personalization. Enter your job details to get a recommended salary range, negotiation tips, and an analysis of whether that salary is actually livable in your target city.
+WageWise helps tech professionals make informed career decisions by combining real Bureau of Labor Statistics wage data with AI-powered personalization. Enter your job details to get a recommended salary range, negotiation tips, and an analysis of whether that salary is actually livable in your target city.
 
 ---
 
