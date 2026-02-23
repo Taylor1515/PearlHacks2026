@@ -151,8 +151,11 @@ export async function generateSalaryEstimate(
 
   const text = response.text ?? "";
 
-  // Strip markdown code fences if Gemini adds them despite instructions
-  const cleaned = text.replace(/```json|```/g, "").trim();
+  // Strip markdown code fences, then extract the first {...} JSON block.
+  // This handles cases where Gemini adds preamble/postamble text despite instructions.
+  const stripped = text.replace(/```json\n?|```/g, "").trim();
+  const jsonMatch = stripped.match(/\{[\s\S]*\}/);
+  const cleaned = jsonMatch ? jsonMatch[0] : stripped;
 
   try {
     const parsed = JSON.parse(cleaned) as SalaryEstimateOutput;
