@@ -240,7 +240,7 @@ export default function WageWise() {
                 </Link>
 
                 {/* Navigation Menu */}
-                <NavigationMenu>
+                <NavigationMenu viewport={false}>
                     <NavigationMenuList className="gap-1">
                     <NavigationMenuItem>
                         <NavigationMenuLink asChild>

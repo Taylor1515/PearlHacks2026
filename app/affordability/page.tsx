@@ -204,7 +204,7 @@ export default function AffordabilityPage() {
             </span>
           </Link>
 
-          <NavigationMenu>
+          <NavigationMenu viewport={false}>
             <NavigationMenuList className="gap-1">
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
