@@ -242,6 +242,13 @@ export default function WageWise() {
                 {/* Navigation Menu */}
                 <NavigationMenu viewport={false}>
                     <NavigationMenuList className="gap-1">
+                        <NavigationMenuItem>
+                            <NavigationMenuLink asChild>
+                            <Link href="/" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent focus:bg-transparent transition-[transform,color] duration-200 hover:text-primary focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105">
+                                Home
+                            </Link>
+                            </NavigationMenuLink>
+                        </NavigationMenuItem>
                     <NavigationMenuItem>
                         <NavigationMenuLink asChild>
                             <Link href="/salary" className="group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-transparent hover:bg-transparent focus:bg-transparent transition-[transform,color] duration-200 hover:text-primary focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 hover:scale-105">
